@@ -1,0 +1,119 @@
+import random
+from string import *
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+import pyperclip
+
+
+def generatepass(length=8):
+    val = ascii_letters + digits + punctuation  # We can just keep letters and digits
+
+    password = "".join(random.choice(val) for _ in range(length))
+    return password
+    # returns randomly generated password
+
+
+def generate_password():
+    try:
+        length = int(length_entry.get())
+    except ValueError:
+        result_label.config(text="Invalid input. Please enter a valid number.")
+        return
+
+    if length < 8:
+        result_label.config(text="Password length must be greater than or equal to  8.")
+        return
+
+    password = generatepass(length)
+    result_label.config(text=f"Generated Password  {password}")
+    copy_button.config(
+        state=tk.NORMAL,
+        image=icon_normal,
+        text="Copy",
+    )  # Enable the copy button and set the normal icon and text
+
+
+def copy_to_clipboard():
+    password = result_label.cget("text")[
+        18:
+    ]  # Extract the generated password from the label text
+    pyperclip.copy(password)  # Copy password to clipboard
+    copy_button.config(image=icon_copied, text="Copied")  # Set the copied icon and text
+
+
+main = tk.Tk()
+main.overrideredirect(False)  # Remove the window border
+
+
+main.title("Password Generator")
+
+# Configure row and column weights
+main.grid_rowconfigure(2, weight=1)
+main.grid_columnconfigure((0, 1), weight=1)
+
+# Create and place widgets
+length_label = ttk.Label(main, text="Password Length:")
+length_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+length_label.configure(background="#000036", foreground="white")
+
+
+length_entry = ttk.Entry(main)
+length_entry.grid(row=0, column=1, padx=10, pady=10, sticky="we")
+length_entry.configure(background="#000036", foreground="#000036")
+
+# button_color = "#000036"
+generate_button = ttk.Button(main, text="Generate  Password", command=generate_password)
+generate_button.grid(row=1, column=0, columnspan=2, pady=10)
+# generate_button.
+
+result_label = ttk.Label(main, background="#000036")
+result_label.grid(
+    row=2,
+    column=0,
+    columnspan=2,
+    pady=0,
+)
+result_label.configure(background="#000036", foreground="white")
+
+
+# For icon on the window
+img_icon = ImageTk.PhotoImage(file="C:\\Users\\DELL\\Downloads\\password.png")
+main.iconphoto(False, img_icon)
+
+# normal copy icon
+icon_normal = Image.open("C:\\Users\\DELL\\Downloads\\copy.png")
+icon_normal = icon_normal.resize((15, 10))
+icon_normal = ImageTk.PhotoImage(icon_normal)
+
+# copied check icon
+icon_copied = Image.open("C:\\Users\\DELL\\Downloads\\check.png")
+icon_copied = icon_copied.resize((15, 10))
+icon_copied = ImageTk.PhotoImage(icon_copied)
+
+# copy button with normal icon and text
+copy_button = ttk.Button(
+    main,
+    image=icon_normal,
+    command=copy_to_clipboard,
+    state=tk.DISABLED,
+    text="Copy",
+    compound="left",
+)
+copy_button.grid(row=2, column=2, pady=10, padx=(0, 10))
+
+# Set the normal icon and text to the button
+copy_button.image = icon_normal
+
+# Set the background color of the window
+main.configure(
+    bg="#000036"
+)  # for background color if we want to in our case it's blue shade
+
+
+# Bind the <Configure> event to the update_layout function
+main.geometry("400x200")  # Use small x for window height and width
+
+
+# Start the Tkinter event loop
+main.mainloop()
