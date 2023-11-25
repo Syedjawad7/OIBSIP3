@@ -6,12 +6,21 @@ from PIL import Image, ImageTk
 import pyperclip
 
 
-def generatepass(length=8):
-    val = ascii_letters + digits + punctuation  # We can just keep letters and digits
 
-    password = "".join(random.choice(val) for _ in range(length))
-    return password
-    # returns randomly generated password
+def generatepass(length=8):
+    if length < 8:
+        raise ValueError("Password length must be greater than or equal to 8.")
+
+    num_punctuations = 1
+    num_letters_digits = length - num_punctuations
+
+    password = "".join(
+        random.choice(punctuation) for _ in range(num_punctuations)
+    ) + "".join(
+        random.choice(ascii_letters + digits) for _ in range(num_letters_digits)
+    )
+
+    return "".join(random.sample(password, length))
 
 
 def generate_password():
@@ -62,7 +71,6 @@ length_entry = ttk.Entry(main)
 length_entry.grid(row=0, column=1, padx=10, pady=10, sticky="we")
 length_entry.configure(background="#000036", foreground="#000036")
 
-# button_color = "#000036"
 generate_button = ttk.Button(main, text="Generate  Password", command=generate_password)
 generate_button.grid(row=1, column=0, columnspan=2, pady=10)
 # generate_button.
